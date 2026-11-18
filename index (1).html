@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Путь Есим-хана — интерактивная проверка знаний</title>
+<style>
+:root{--bg:#f4ead7;--card:#fffaf0;--ink:#2b2118;--mut:#6b5a48;--acc:#a8441f;--gold:#b8893a;--ok:#2e7d4f;--bad:#b3261e;--line:#d9c8a8;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1d1713;--card:#2a211a;--ink:#f1e6d2;--mut:#b9a78f;--acc:#e0845a;--gold:#d8a94f;--ok:#6fcf97;--bad:#ff8a80;--line:#4a3b2e;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#1d1713;--card:#2a211a;--ink:#f1e6d2;--mut:#b9a78f;--acc:#e0845a;--gold:#d8a94f;--ok:#6fcf97;--bad:#ff8a80;--line:#4a3b2e;color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.45 Georgia,"Times New Roman",serif;min-height:100vh}
+#app{max-width:640px;margin:0 auto;padding:16px}
+h1{font-size:30px;line-height:1.15;margin:8px 0 6px}
+h2{font-size:21px;line-height:1.3;margin:14px 0}
+p{margin:8px 0}
+.mut{color:var(--mut);font-size:15px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;margin:12px 0;box-shadow:0 2px 0 var(--line)}
+.hero{text-align:center;padding:26px 18px;border:2px solid var(--gold)}
+.hero .big{font-size:56px}
+button{font:inherit;color:inherit;cursor:pointer}
+.btn{display:block;width:100%;background:var(--acc);color:#fff;border:0;border-radius:14px;padding:14px;font-weight:bold;margin-top:12px;font-size:17px}
+.btn.alt{background:transparent;color:var(--acc);border:2px solid var(--acc)}
+.opt{display:block;width:100%;text-align:left;background:var(--card);border:2px solid var(--line);border-radius:14px;padding:13px 14px;margin:9px 0;transition:.15s}
+.opt:hover:not([disabled]){border-color:var(--gold)}
+.opt.ok{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 18%,var(--card))}
+.opt.bad{border-color:var(--bad);background:color-mix(in srgb,var(--bad) 18%,var(--card))}
+.opt[disabled]{cursor:default}
+.top{display:flex;justify-content:space-between;gap:8px;font-size:14px;color:var(--mut);font-family:system-ui,sans-serif}
+.bar{height:8px;background:var(--line);border-radius:8px;margin:8px 0 4px;overflow:hidden}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--acc),var(--gold));transition:width .3s}
+.tag{display:inline-block;font:bold 12px system-ui,sans-serif;letter-spacing:.04em;text-transform:uppercase;color:var(--acc);margin-bottom:4px}
+.fb{border-left:5px solid var(--gold);padding:8px 12px;margin-top:12px;background:color-mix(in srgb,var(--gold) 12%,var(--card));border-radius:0 10px 10px 0;font-size:16px}
+.duel{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.duel .opt{text-align:center;font-weight:bold;margin:0}
+.tl{border-left:4px solid var(--gold);margin:8px 0 8px 10px;padding-left:14px}
+.tl div{padding:6px 0;animation:pop .3s}
+.tl b{color:var(--acc)}
+@keyframes pop{from{transform:scale(.9);opacity:0}to{transform:none;opacity:1}}
+@keyframes shake{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.shake{animation:shake .3s;border-color:var(--bad)!important}
+.stat{display:flex;gap:10px;margin:10px 0}
+.stat div{flex:1;text-align:center;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px}
+.stat b{display:block;font-size:24px;color:var(--acc)}
+.err{padding:10px 0;border-top:1px dashed var(--line);font-size:15px}
+.err small{color:var(--mut)}
+.teams{display:flex;gap:6px;margin:4px 0 8px}
+.tm{flex:1;min-width:0;text-align:center;border:2px solid var(--line);border-top:5px solid var(--c);border-radius:10px;background:var(--card);padding:4px 2px;font:13px system-ui,sans-serif;opacity:.7}
+.tm.on{opacity:1;border-color:var(--c);box-shadow:0 0 0 2px var(--c)}
+.tm span{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tm b{font-size:20px;color:var(--ink)}
+.turn{background:var(--c);color:#fff;border-radius:10px;padding:8px 12px;text-align:center;margin-bottom:8px;font-family:system-ui,sans-serif}
+.seg{display:flex;gap:8px}.seg .opt{text-align:center;margin:0;font-weight:bold}
+.inp{display:block;width:100%;font:inherit;color:var(--ink);background:var(--card);border:2px solid var(--line);border-radius:10px;padding:10px 12px;margin:8px 0}
+.pod{display:flex;align-items:center;gap:12px;padding:12px 0;border-top:1px dashed var(--line)}
+.pod .m{font-size:30px}.pod .nm{flex:1}.pod b{font-size:24px;color:var(--acc)}
+#ps{margin-top:10px}.chips{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0}
+.chip{background:var(--c);color:#fff;border:0;border-radius:20px;padding:7px 14px;font:bold 14px system-ui,sans-serif}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+// Данные взяты из презентации «Есим-хан: Архитектор степного права и объединитель Казахского ханства»
+// [вопрос, верный ответ, [неверные], пояснение, слайд]
+const MC=[
+["В какие годы правил Есим-хан («Еңсегей бойлы ер Есім»)?","1598–1628 гг. (с перерывами)",["1603–1624 гг.","1613–1627 гг.","1627–1645 гг."],"1603–1624 гг. — период казахско-бухарских войн, а 1645 г. — год смерти хана.",3],
+["Чьим сыном был Есим-хан?","Шигай-хана",["Касым-хана","Джалим-султана","Тауекель-хана"],"Есим — сын Шигай-хана и младший брат Тауекеля, потомок Чингизидов.",3],
+["Какое государство стремилось захватить торговые центры на Сырдарье (Ташкент, Туркестан, Сайрам)?","Бухарское ханство (Аштарханиды)",["Ойратские племена","Ногайская Орда","Царская Россия"],"Восток — ойраты (набеги на Жетысу), запад и север — распад Ногайской Орды и колонизация долины Яика.",2],
+["Кто был полностью разгромлен в битве при Айгыр-Жаре (1603 г.)?","Бухарцы",["Ойраты","Ногайцы","Войско Турсун-хана"],"Бухарцев разбило объединённое казахско-кыргызское войско.",4],
+["Какой правитель Бухары из династии Аштарханидов признал поражение в 1620–1624 гг.?","Имамкули",["Абдаллах-хан","Тауекель","Жиембет-батыр"],"В 1611–1613 гг. Имамкули захватывал Ташкент, но серия казахских походов сломила его.",4],
+["Кто был главнокомандующим в 83-дневной битве 1627 г.?","Жиембет-батыр",["Есим-хан","Тауекель","Имамкули"],"Первые полтора месяца шли только одиночные поединки батыров.",5],
+["Где находилась ставка Турсун-хана, объявившего себя независимым ханом в 1613 г.?","В Ташкенте",["В Туркестане","В Андижане","В Жаркенте"],"Туркестан — ставка законного хана Есима. В Андижане, Жаркенте и Турфане правили другие независимые султаны.",6],
+["Что было опорой Турсун-хана?","Племя катаган и финансовая поддержка Бухары",["Широкие массы казахов, бии и батыры","Кыргызы и Алтын-хан","Ойратские племена"],"Есим опирался на народ, биев и батыров — в этом и состояла разница между ними.",7],
+["В чём состояло «предательство» Турсуна в 1627 г.?","Нарушил клятву и пошёл на Туркестан, пока Есим воевал с ойратами",["Перешёл на сторону ойратов","Сдал Ташкент Бухаре без боя","Убил Жиембет-батыра"],"Войско Турсуна разорило Туркестан и увело в плен в Ташкент семью Есима.",8],
+["Чем закончилось двоевластие?","Турсуна убило собственное окружение, голову отправили Имамкули в Бухару",["Есим и Турсун заключили вечный мир","Турсун добровольно отрёкся","Есим бежал в Бухару"],"Разочарованные нукеры и батыры перешли на сторону Есима; Турсун отказался от поединка и бежал.",9],
+["В чём суть «Бийской революции»?","Чингизиды лишены неограниченной власти, реальная власть перешла к бийям и батырам",["Бии упразднили ханскую власть","Хан получил право смещать руководителей родов","Султаны-чингизиды получили всю власть на местах"],"Хан зависел от Совета Биев и без их одобрения не мог назначать или смещать руководителей родов.",11],
+["На чём держалась власть биев?","На личном авторитете и ораторском искусстве",["На происхождении от Чингисхана","На праве сбора налогов","На командовании ханским войском"],"Это и делало их «элитой по заслугам», а не «элитой по крови».",11],
+["Какой жуз охватывал Жетысу и Юг и был центром отражения ойратских набегов?","Старший жуз",["Младший жуз","Средний жуз","Золотоордынский улус"],"Младший — запад (включил часть ногайцев-алшынов), Средний — центр, север и восток.",12],
+["Какое направление НЕ названо среди четырёх областей свода «Есім ханның ескі жолы»?","Таможенное право",["Имущественное право","Уголовное право","Воинская повинность"],"Четвёртое направление — социальные нормы (положение женщин, дипломатия, отношения общин).",13],
+["Что хан НЕ мог делать самостоятельно по новой структуре власти?","Объявлять войну, заключать мир и выносить смертные приговоры",["Командовать войском","Выступать верховным судьёй","Созывать ополчение"],"Хан — верховный главнокомандующий и судья, но под контролем Совета Биев.",14],
+["Как часто собирался Маслихат — главный орган законодательной власти?","Раз в год, чаще осенью",["Каждый день","Раз в десять лет","Только во время войны"],"Места сбора — Улытау или гора Култобе у Туркестана. «Каждый день совет на Култобе» — символ коллегиальности.",14]
+];
+// [утверждение, 0 = Есим / 1 = Турсун, слайд]
+const DU=[
+["Сын Шигай-хана — законная линия",0,7],["Сын Джалим-султана",1,7],["Опирался на племя катаган и Бухару",1,7],
+["Опирался на биев, батыров и широкие массы",0,7],["Чеканил собственную монету",1,7],["Дипломатичный, выжидающий, сторонник единства",0,7],
+["Нарушил клятву о ненападении",1,8],["Защищал общие границы от ойратов",0,7]];
+// [год, событие, слайд]
+const CH=[[1598,"Мирный договор, присоединение Ташкента и Самарканда",4],[1603,"Битва при Айгыр-Жаре",4],[1613,"Турсун объявляет себя независимым ханом в Ташкенте",6],[1620,"Битва у Тобола и Чёрного Иртыша",5],[1627,"83-дневная битва, предательство Турсуна и «Катаганское побоище»",9],[1645,"Смерть Есим-хана",15]];
+
+const $=s=>document.querySelector(s),app=$("#app");
+const shuf=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a};
+const ALL=[...MC.map(d=>({t:"mc",d})),...DU.map(d=>({t:"du",d})),{t:"ch",d:CH}];
+const ROUND={mc:"Раунд 1 · Знаток эпохи",du:"Раунд 2 · Есим или Турсун?",ch:"Раунд 3 · Лента времени"};
+let items=[],idx=0,score=0,streak=0,res=[],teams=null,ovr=null,cur=0,nT=3,tn=["Батыры","Бии","Нукеры","Жузы"];
+const COL=["#a8441f","#2e6f9e","#2e7d4f","#8a5aa8"];
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const save=(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}};
+const load=k=>{try{return localStorage.getItem(k)}catch(e){return null}};
+
+function home(){teams=null;
+  const best=load("esimBest");
+  app.innerHTML=`<div class="card hero"><div class="big">🏹</div><h1>Путь Есим-хана</h1>
+  <p class="mut">Интерактивная проверка знаний по теме «Есим-хан: архитектор степного права и объединитель Казахского ханства»</p>
+  <p>Три раунда: ${MC.length} вопросов, дуэль «Есим против Турсуна» и хронология событий.</p>
+  ${best?`<p class="mut">Ваш рекорд: ${best} очков</p>`:""}
+  <button class="btn" id="go">Играть одному</button><button class="btn alt" id="tm">👥 Командная игра</button></div>`;
+  $("#tm").onclick=setup;
+  $("#go").onclick=()=>start(shuf(MC.map(d=>({t:"mc",d}))).concat(shuf(DU.map(d=>({t:"du",d}))),[{t:"ch",d:CH}]));
+}
+function start(list){items=list;ovr=null;idx=0;score=0;streak=0;res=[];show()}
+function head0(it){return `<div class="top"><span>${ROUND[it.t]}</span><span>${idx+1}/${items.length}</span><span>★ ${score}</span><span>🔥 ${streak}</span></div><div class="bar"><i style="width:${idx/items.length*100}%"></i></div>`}
+function award(ok,it){
+  if(teams){const t=teams[cur];t.n++;if(ok){t.k++;t.c++;t.s+=it.t==="ch"?300:100+Math.min(t.k-1,5)*20}else t.k=0;score=t.s;streak=t.k;res.push({it,ok});const e=$("#tb");if(e)e.innerHTML=tbHTML();return}if(ok){streak++;score+=100+Math.min(streak-1,5)*20}else streak=0;res.push({it,ok})}
+function next(){idx++;ovr=null;show()}
+function show(){
+  if(idx>=items.length)return finish();
+  const it=items[idx];
+  if(teams){cur=ovr!==null?ovr:it.t==="ch"?teams.reduce((m,t,i)=>t.s<teams[m].s?i:m,0):idx%teams.length;score=teams[cur].s;streak=teams[cur].k}
+  if(it.t==="mc")mc(it);else if(it.t==="du")du(it);else ch(it);
+  window.scrollTo(0,0);
+}
+function mc(it){
+  const [q,c,w,why,sl]=it.d,opts=shuf([c,...w]);
+  app.innerHTML=head(it)+`<div class="card"><span class="tag">Вопрос</span><h2>${q}</h2><div id="o">${opts.map(o=>`<button class="opt">${o}</button>`).join("")}</div><div id="ps">${passHTML()}</div><div id="fb"></div></div>`;bindPass();
+  document.querySelectorAll("#o .opt").forEach(b=>b.onclick=()=>{
+    const ok=b.textContent===c;
+    document.querySelectorAll("#o .opt").forEach(x=>{x.disabled=true;if(x.textContent===c)x.classList.add("ok")});
+    if(!ok)b.classList.add("bad");
+    award(ok,it);
+    pa(ok);$("#fb").innerHTML=`<div class="fb"><b>${ok?"Верно!":"Не совсем."}</b> ${why} <span class="mut">(слайд ${sl})</span></div><button class="btn" id="nx">Дальше</button>`;
+    $("#nx").onclick=next;
+  });
+}
+function du(it){
+  const [t,a,sl]=it.d,names=["Есим-хан","Турсун-хан"];
+  app.innerHTML=head(it)+`<div class="card"><span class="tag">Кому это подходит?</span><h2>«${t}»</h2><div class="duel"><button class="opt" data-a="0">Есим-хан</button><button class="opt" data-a="1">Турсун-хан</button></div><div id="ps">${passHTML()}</div><div id="fb"></div></div>`;bindPass();
+  document.querySelectorAll(".duel .opt").forEach(b=>b.onclick=()=>{
+    const ok=+b.dataset.a===a;
+    document.querySelectorAll(".duel .opt").forEach(x=>{x.disabled=true;if(+x.dataset.a===a)x.classList.add("ok")});
+    if(!ok)b.classList.add("bad");
+    award(ok,it);
+    pa(ok);$("#fb").innerHTML=`<div class="fb"><b>${ok?"Верно!":"Нет."}</b> Это ${names[a]}. <span class="mut">(слайд ${sl})</span></div><button class="btn" id="nx">Дальше</button>`;
+    $("#nx").onclick=next;
+  });
+}
+function ch(it){
+  let placed=0,miss=false;const order=shuf(CH.map((e,i)=>i));
+  const draw=()=>{
+    app.innerHTML=head(it)+`<div class="card"><span class="tag">Хронология</span><h2>Нажимайте события в порядке от раннего к позднему</h2>
+    <div class="tl">${CH.slice(0,placed).map(e=>`<div><b>${e[0]}</b> — ${e[1]} <span class="mut">(слайд ${e[2]})</span></div>`).join("")||'<div class="mut">Здесь появится лента времени…</div>'}</div>
+    <div id="o">${order.filter(i=>i>=placed).map(i=>`<button class="opt" data-i="${i}">${CH[i][1]}</button>`).join("")}</div>
+    ${placed===CH.length?`<div class="fb"><b>${miss?"Лента собрана, но с ошибками.":"Безупречно!"}</b> От мира 1598 г. до смерти хана в 1645 г.</div><button class="btn" id="nx">Узнать результат</button>`:""}</div>`;
+    document.querySelectorAll("#o .opt").forEach(b=>b.onclick=()=>{
+      if(+b.dataset.i===placed){placed++;if(placed===CH.length)award(!miss,it);draw()}
+      else{miss=true;b.classList.add("shake");setTimeout(()=>b.classList.remove("shake"),350)}
+    });
+    const n=$("#nx");if(n)n.onclick=next;
+  };draw();
+}
+function title(p){return p>=.9?["👑","Хан-реформатор"]:p>=.75?["⚖️","Бий"]:p>=.55?["🏹","Батыр"]:p>=.35?["🐎","Нукер"]:["📜","Новобранец"]}
+function finish(){if(teams)return finT();
+  const good=res.filter(r=>r.ok).length,p=good/items.length,[ic,nm]=title(p),bad=res.filter(r=>!r.ok);
+  if(items.length===ALL.length||items.length>20){const b=+load("esimBest")||0;if(score>b)save("esimBest",score)}
+  const desc=r=>r.it.t==="mc"?`${r.it.d[0]}<br><small>Верно: ${r.it.d[1]} · слайд ${r.it.d[4]}</small>`:r.it.t==="du"?`«${r.it.d[0]}»<br><small>Верно: ${["Есим-хан","Турсун-хан"][r.it.d[1]]} · слайд ${r.it.d[2]}</small>`:`Расставьте события в хронологическом порядке<br><small>1598 → 1603 → 1613 → 1620 → 1627 → 1645 · слайды 4–6, 9</small>`;
+  app.innerHTML=`<div class="card hero"><div class="big">${ic}</div><span class="tag">Ваш титул</span><h1>${nm}</h1><p class="mut">Верных ответов: ${good} из ${items.length}</p></div>
+  <div class="stat"><div><b>${score}</b>очков</div><div><b>${Math.round(p*100)}%</b>точность</div></div>
+  ${bad.length?`<div class="card"><h2>Над чем поработать</h2>${bad.map(r=>`<div class="err">${desc(r)}</div>`).join("")}</div>`:`<div class="card"><p>Ошибок нет — вы знаете тему на отлично!</p></div>`}
+  ${bad.length?'<button class="btn" id="re">Повторить только ошибки</button>':""}
+  <button class="btn alt" id="all">Пройти заново</button>`;
+  const re=$("#re");if(re)re.onclick=()=>start(shuf(bad.map(r=>r.it)));
+  $("#all").onclick=home;
+  window.scrollTo(0,0);
+}
+function passHTML(after){return teams&&teams.length>1?`<span class="mut">${after?"Команда ошиблась — передать вопрос:":"Передать вопрос другой команде:"}</span><div class="chips">${teams.map((t,i)=>i===cur?"":`<button class="chip" data-p="${i}" style="--c:${COL[i]}">${t.name}</button>`).join("")}</div>`:""}
+function bindPass(){document.querySelectorAll("[data-p]").forEach(b=>b.onclick=()=>{ovr=+b.dataset.p;show()})}
+function pa(ok){const e=$("#ps");if(e){e.innerHTML=ok?"":passHTML(true);bindPass()}}
+const tbHTML=()=>teams.map((t,i)=>`<div class="tm${i===cur?" on":""}" style="--c:${COL[i]}"><span>${t.name}</span><b>${t.s}</b></div>`).join("");
+function head(it){return teams?`<div class="teams" id="tb">${tbHTML()}</div><div class="turn" style="--c:${COL[cur]}">${it.t==="ch"?"Блиц-финал за 300 очков · играет команда ":"Отвечает команда "}<b>${teams[cur].name}</b></div>`+head0(it):head0(it)}
+function setup(){
+  app.innerHTML=`<div class="card"><span class="tag">Командный режим</span><h2>Сколько команд?</h2><div class="seg" id="sg">${[2,3,4].map(n=>`<button class="opt${n===nT?" ok":""}" data-n="${n}">${n}</button>`).join("")}</div><div id="nm"></div><p class="mut">Команда совещается, капитан нажимает ответ. Вопрос можно передать другой команде вручную, до ответа или после ошибки. Вопросы идут по кругу. В финале команда, замыкающая таблицу, играет «Ленту времени» за 300 очков — шанс отыграться.</p><button class="btn" id="st">Играть</button><button class="btn alt" id="bk">Назад</button></div>`;
+  const drawN=()=>{$("#nm").innerHTML=tn.slice(0,nT).map((v,i)=>`<input class="inp" data-i="${i}" value="${esc(v)}" maxlength="18" style="border-left:8px solid ${COL[i]}">`).join("");document.querySelectorAll(".inp").forEach(e=>e.oninput=()=>{tn[+e.dataset.i]=e.value})};
+  drawN();
+  document.querySelectorAll("#sg .opt").forEach(b=>b.onclick=()=>{nT=+b.dataset.n;document.querySelectorAll("#sg .opt").forEach(x=>x.classList.toggle("ok",x===b));drawN()});
+  $("#st").onclick=begin;$("#bk").onclick=home;
+}
+function begin(){
+  teams=tn.slice(0,nT).map((v,i)=>({name:esc((v||"").trim()||"Команда "+(i+1)),s:0,k:0,c:0,n:0}));
+  const m=Math.floor(MC.length/nT)*nT,q=Math.floor(DU.length/nT)*nT;
+  start(shuf(MC.map(d=>({t:"mc",d}))).slice(0,m).concat(shuf(DU.map(d=>({t:"du",d}))).slice(0,q),[{t:"ch",d:CH}]));
+}
+function finT(){
+  const r=teams.slice().sort((a,b)=>b.s-a.s),tie=r.length>1&&r[0].s===r[1].s;
+  app.innerHTML=`<div class="card hero"><div class="big">🏆</div><span class="tag">${tie?"Ничья!":"Победитель"}</span><h1>${tie?r.filter(t=>t.s===r[0].s).map(t=>t.name).join(" и "):r[0].name}</h1><p class="mut">${r[0].s} очков</p></div><div class="card">${r.map((t,i)=>`<div class="pod"><span class="m">${["🥇","🥈","🥉","4️⃣"][i]}</span><span class="nm">${t.name}<br><small class="mut">верно ${t.c} из ${t.n}</small></span><b>${t.s}</b></div>`).join("")}</div><button class="btn" id="rv">Реванш</button><button class="btn alt" id="hm">В начало</button>`;
+  $("#rv").onclick=begin;$("#hm").onclick=home;window.scrollTo(0,0);
+}
+home();
+</script>
+</body>
+</html>
